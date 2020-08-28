@@ -32,9 +32,9 @@ function findLoop($pi, $string, $starting_number, $counter = 0, $positions = [])
 		* That does not mean that the sequence is nowhere to be found within pi, only that you ran out of digits to search through.
 		* This is a common phenomenon considering the steady growth of the number of digits with each iteration).
 		* The more digits a sequence consists of, the more unlikely its occurrence within a limited number of digits.
-		* Here lies the hear of the matter. Given enough digits, will a loop always occur? 
+		* Here lies the heart of the matter. Given enough digits, will a loop always occur? 
 		* One way to find out is to expand the file with more digits.
-		* For now, exit the function to continue and search with a different number
+		* For now, exit the function to continue the search with a different number
 		*/
 		return;
 	}
