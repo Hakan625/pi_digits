@@ -2,7 +2,7 @@
 A fun little project dealing with the digits of pi.
 
 To set up the scripts correctly, a text file containing digits of pi must be prepared.
-The files each contain instructions on how to properly set up that file.
+The scripts each contain instructions in commentary on how to properly set up that file.
 Depending on your computer's memory capacity, a limited number of digits can be loaded into the memory.
 
 PHP has built-in limitations on runtime and maximum memory allocation.
