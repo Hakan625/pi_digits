@@ -3,7 +3,7 @@
 /*
 * This script looks for loops within pi's digits.
 *
-* check out https://www.youtube.com/watch?v=W20aT14t8Pw&t=390 for a detailed explanation of the idea.
+* check out this video https://www.youtube.com/watch?v=W20aT14t8Pw&t=390 for a detailed explanation of the idea.
 * 
 * Of each integer within a defined range, the position of its first occurrence is searched within pi. 
 * That number is then fed back into the searching function to produce another position.
@@ -14,7 +14,7 @@
 *
 * Note: for this to work, the first character in the file containing the digits must be a non-numeric character (for example: a decimal point).
 * The 3 preceding the decimal point must also be removed, because we are only interested in the digits after the decimal point
-* and among humans, "position 0" isn't a popular way to denote the first position.
+* and also because among humans, "position 0" isn't a popular way to denote the first position.
 *
 */
 
@@ -34,7 +34,7 @@ function findLoop($pi, $string, $starting_number, $counter = 0, $positions = [])
 		* The more digits a sequence consists of, the more unlikely its occurrence within a limited number of digits.
 		* Here lies the heart of the matter. Given enough digits, will a loop always occur? 
 		* One way to find out is to expand the file with more digits.
-		* For now, exit the function to continue the search with a different number
+		* For now, exit the function to continue and search with a different number
 		*/
 		return;
 	}
@@ -51,7 +51,14 @@ function findLoop($pi, $string, $starting_number, $counter = 0, $positions = [])
 		findLoop($pi, $string, $starting_number, $counter, $positions);
 	} else {
 		// If the position is already present within the $positions array, it means that a loop has occurred.
-		$content = "After $counter iterations, the number $starting_number loops back to a previous position.".PHP_EOL.PHP_EOL;
+
+		// Gather the information
+		$content = "After $counter iterations, the number $starting_number loops back to a previous position.";
+		// Display the information in the browser
+		echo "<p>".$content."</p>";
+		// Concatenate two line breaks
+		$content .= PHP_EOL.PHP_EOL;
+		// Add the starting number
 		$content .= $starting_number.PHP_EOL;
 		// Add the final (repeating) position to the $positions array, to demonstrate that the loop occurs.
 		$positions[] = $position;
@@ -76,8 +83,8 @@ function findLoop($pi, $string, $starting_number, $counter = 0, $positions = [])
 $pi = file_get_contents('pi_one_billion.txt');
 
 // Define boundaries within which to search
-$lower_boundary = 1;
-$upper_boundary = 50;
+$lower_boundary = 3000;
+$upper_boundary = 3999;
 
 // Start a stopwatch
 $start = microtime(true);
@@ -95,8 +102,6 @@ $finish = microtime(true);
 // Calculate the difference
 $time = $finish - $start;
 // Present the answer
-echo "Completed the search in: $time sec. Go ahead and look in the loops/ directory";
-
-
+echo "<p>Completed the search in: $time sec. Go ahead and look in the loops/ directory</p>";
 
 ?>
