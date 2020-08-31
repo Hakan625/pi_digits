@@ -2,7 +2,7 @@
 
 /*
 * The following script searches pi for a thing called 'self locating strings': 
-* a sequence of numbers that matches the position the string is located at.
+* a sequence of digits that matches the position the string is located at.
 
 * Example:
 * Pi = 3.1415926535897932
