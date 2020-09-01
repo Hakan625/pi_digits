@@ -14,7 +14,7 @@
 *
 * Note: for this to work, the first character in the file containing the digits must be a non-numeric character (for example: a decimal point).
 * The 3 preceding the decimal point must also be removed, because we are only interested in the digits after the decimal point
-* and also because among humans, "position 0" isn't a popular way to denote the first position.
+* and among humans, "position 0" isn't a popular way to denote the first position.
 *
 */
 
@@ -24,8 +24,8 @@ function findLoop($pi, $string, $starting_number, $counter = 0, $positions = [])
 	preg_match('/'.$string.'/', $pi, $matches, PREG_OFFSET_CAPTURE);
 	// If the sequence was found, the number of elements in the $matches array will be greater than 0.
 	if (count($matches) > 0) {
-		// Typecast the offset to (string) and name it $position
-		$position = (string)$matches[0][1];
+		// Store the offset as $position
+		$position = $matches[0][1];
 	} else {
 		/* 
 		* If the number of elements is 0, no match was found within the available digits of pi.
@@ -42,9 +42,9 @@ function findLoop($pi, $string, $starting_number, $counter = 0, $positions = [])
 	// Verify that the captured position is novel
 	if (!in_array($position, $positions)) {
 		// If so, select it as the next string to search for
-		$string = (string)$position;
-		// Add the string to the $positions array
-		$positions[] = $string;
+		$string = $position;
+		// Add the position to the $positions array
+		$positions[] = $position;
 		// Increment the counter.
 		$counter++;
 		// Re-enter the new string back into the function recursively
@@ -65,7 +65,7 @@ function findLoop($pi, $string, $starting_number, $counter = 0, $positions = [])
 
 		// Loop through the $positions array and concatenate the content.
 		foreach ($positions as $key => $position) {
-			$content .= (string)$position.PHP_EOL;
+			$content .= $position.PHP_EOL;
 		}
 		// Prepare a directory to store the data.
 		if (!is_dir('loops')) {
@@ -83,25 +83,31 @@ function findLoop($pi, $string, $starting_number, $counter = 0, $positions = [])
 $pi = file_get_contents('pi_one_billion.txt');
 
 // Define boundaries within which to search
-$lower_boundary = 3000;
-$upper_boundary = 3999;
+$lower_boundary = 6450;
+$upper_boundary = 6550;
 
 // Start a stopwatch
-$start = microtime(true);
+$start_microtime = microtime(true);
+$start_hrtime = hrtime(true);
 
 // Start the search 
 for ($i = $lower_boundary; $i < $upper_boundary; $i++) { 
 	// Typecast the integer to string
-	$i = (string)$i;
+	// $i = (string)$i;
 	// Lift off!
 	findLoop($pi, $i, $i);
 }
 
-// Stop the stopwatch
-$finish = microtime(true);
+// Stop the stopwatch	
+$finish_microtime = microtime(true);
+$finish_hrtime = hrtime(true);
 // Calculate the difference
-$time = $finish - $start;
+$time_microtime = $finish_microtime - $start_microtime;
+$time_hrtime = ($finish_hrtime - $start_hrtime) / 1000000000;
 // Present the answer
-echo "<p>Completed the search in: $time sec. Go ahead and look in the loops/ directory</p>";
+echo "<p>Completed the search in: $time_microtime sec. Go ahead and look in the loops/ directory</p>";
+echo "<p>Completed the search in: $time_hrtime sec. Go ahead and look in the loops/ directory</p>";
+
+
 
 ?>
