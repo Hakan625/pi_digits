@@ -43,7 +43,7 @@ function findLoop($pi, $string, $starting_number, $counter = 0, $positions = [])
 	if (!in_array($position, $positions)) {
 		// If so, select it as the next string to search for
 		$string = $position;
-		// Add the position to the $positions array
+		// Add the string to the $positions array
 		$positions[] = $position;
 		// Increment the counter.
 		$counter++;
@@ -83,31 +83,23 @@ function findLoop($pi, $string, $starting_number, $counter = 0, $positions = [])
 $pi = file_get_contents('pi_one_billion.txt');
 
 // Define boundaries within which to search
-$lower_boundary = 6450;
-$upper_boundary = 6550;
+$lower_boundary = 6650;
+$upper_boundary = 6670;
 
 // Start a stopwatch
-$start_microtime = microtime(true);
-$start_hrtime = hrtime(true);
+$start = hrtime();
 
 // Start the search 
 for ($i = $lower_boundary; $i < $upper_boundary; $i++) { 
-	// Typecast the integer to string
-	// $i = (string)$i;
 	// Lift off!
 	findLoop($pi, $i, $i);
 }
 
 // Stop the stopwatch	
-$finish_microtime = microtime(true);
-$finish_hrtime = hrtime(true);
+$finish = hrtime();
 // Calculate the difference
-$time_microtime = $finish_microtime - $start_microtime;
-$time_hrtime = ($finish_hrtime - $start_hrtime) / 1000000000;
+$time = ($finish[0] + ($finish[1] / 1000000000)) - ($start[0] + ($start[1] / 1000000000));
 // Present the answer
-echo "<p>Completed the search in: $time_microtime sec. Go ahead and look in the loops/ directory</p>";
-echo "<p>Completed the search in: $time_hrtime sec. Go ahead and look in the loops/ directory</p>";
-
-
+echo "<p>Completed the search in: $time sec. Go ahead and look in the loops/ directory</p>";
 
 ?>
