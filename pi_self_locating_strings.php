@@ -18,9 +18,6 @@
 * It should look like this:
 * .14159265.....
 *
-* However if editing the txt file is not an option due to memory restrictions on your text editor, 
-* un-comment line #34 by removing the two forward slashes at the start of the line. 
-*
 */
 
 function findLoop(string $pi, string $string, int $starting_number, array $positions, int $counter = 0){
@@ -31,7 +28,6 @@ function findLoop(string $pi, string $string, int $starting_number, array $posit
 	if (count($matches) > 0) {
 		// Store the offset as $position
 		$position = $matches[0][1];
-		// $position = (string) ($matches[0][1] - 1);  
 	} else {
 		/* 
 		* If the number of elements is 0, no match was found within the available digits of pi.
