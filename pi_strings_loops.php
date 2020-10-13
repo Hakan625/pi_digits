@@ -1,105 +1,136 @@
 <?php
 
 /*
-* This script looks for loops within pi's digits.
+* Hello and welcome to Pi Loops
 *
 * check out this video https://www.youtube.com/watch?v=W20aT14t8Pw&t=390 for a detailed explanation of the idea.
 * 
-* Of each integer within a defined range, the position of its first occurrence is searched within pi. 
-* That number is then fed back into the searching function to produce another position.
-* With enough repetitions, observation tells us that some positions loop back around previous positions.
-* How many repetitions are needed varies between numbers.
+* The way it works is like this: 
+* Take a number, and look up the first occurrence in the expansion of pi.
+* Look at the offset of where it was found, and look up the first occurrence of that number
+* Keep repeating this until you find that it returns to one of the previous offsets, effectively creating a loop.
 *
-* This script offers knowledge about those positions and the number of repetitions required to complete the loop.
 *
-* Note: for this to work, the first character in the file containing the digits must be a non-numeric character (for example: a decimal point).
-* The 3 preceding the decimal point must also be removed, because we are only interested in the digits after the decimal point
-* and among humans, "position 0" isn't a popular way to denote the first position.
+* This script goes through all integers within a self defined range (lines 95 and 96) and collects
+* the data on loops that were found, along with a seperate file containing positions that were not found.
+* If you decide to start another search and you want to load those rejects back into memory,
+* uncomment lines 102 and 103 by removing the two forward slashes at the start of the lines
+*
+* Preparation:
+* Download a txt file with a number of pi digits (I downloaded 1.5 billion digits).
+* Put the file in the same directory as this script.
+* Open the file and inspect it: does it start with 3.1415... ?
+* If so, no further action is needed. 
 *
 */
 
-function findLoop($pi, $string, $starting_number, $counter = 0, $positions = []){
+function findLoop($pi,  $string,  $positions = [], $rejects = [], $counter = 0){
 
-	// Perform a search for the sequence of digits within pi, and capture the offset in $matches (array).
+	// Check to see if string is one that is known to lead to a halted search
+	if (in_array($string, $rejects)) {
+		// Next, determine whether the number of positions up until now is greater than 1
+		if (count($positions) > 1) {
+			// Only then, add all positions (but the last one) to the rejects array
+			$rejects = array_merge(array_slice($positions, 0, -1), $rejects);
+		}
+		return $rejects;
+	}
+
+	// search for the string in pi, and capture the offset
 	preg_match('/'.$string.'/', $pi, $matches, PREG_OFFSET_CAPTURE);
-	// If the sequence was found, the number of elements in the $matches array will be greater than 0.
-	if (count($matches) > 0) {
-		// Store the offset as $position
-		$position = $matches[0][1];
-	} else {
-		/* 
-		* If the number of elements is 0, no match was found within the available digits of pi.
-		* That does not mean that the sequence is nowhere to be found within pi, only that you ran out of digits to search through.
-		* This is a common phenomenon considering the steady growth of the number of digits with each iteration).
-		* The more digits a sequence consists of, the more unlikely its occurrence within a limited number of digits.
-		* Here lies the heart of the matter. Given enough digits, will a loop always occur? 
-		* One way to find out is to expand the file with more digits.
-		* For now, exit the function to continue and search with a different number
-		*/
-		return;
+
+	// If the string is not found
+	if (count($matches) == 0) {
+		// Add all positions to the array of rejects
+		$rejects = array_merge($positions, $rejects);
+		// return the rejects array and exit the function
+		return $rejects;
 	}
 
-	// Verify that the captured position is novel
+	// Here? The string was found! Let's continue.
+
+	// select the offset as new string
+	$position = (string) ($matches[0][1] - 1);
+	$position = (string) ($matches[0][1] - 1);
+
+	// Determine whether the found position is novel
 	if (!in_array($position, $positions)) {
-		// If so, select it as the next string to search for
-		$string = $position;
-		// Add the string to the $positions array
+		// Add the position to the positions array
 		$positions[] = $position;
-		// Increment the counter.
+		// increment the interation counter
 		$counter++;
-		// Re-enter the new string back into the function recursively
-		findLoop($pi, $string, $starting_number, $counter, $positions);
+		// Re-enter the new position as the next string to search for (recursion) and return the rejects array that results from it
+		return findLoop($pi, $position, $positions, $rejects, $counter);
+		
+	// If it is already present in the positions array, it means a loop has occurred!
 	} else {
-		// If the position is already present within the $positions array, it means that a loop has occurred.
-
-		// Gather the information
-		$content = "After $counter iterations, the number $starting_number loops back to a previous position.";
-		// Display the information in the browser
+		// Collect some information
+		$content = "After $counter iterations, the number $positions[0] loops back to a previous position.";
+		// Display it in the browser
 		echo "<p>".$content."</p>";
-		// Concatenate two line breaks
+		// Concatenate two line-breaks
 		$content .= PHP_EOL.PHP_EOL;
-		// Add the starting number
-		$content .= $starting_number.PHP_EOL;
-		// Add the final (repeating) position to the $positions array, to demonstrate that the loop occurs.
+
+		// Append the final (repeating) position to demonstrate that the loop occurs
 		$positions[] = $position;
+		// Stack the positions one on top of the other
+		$content .= implode(PHP_EOL, $positions);
 
-		// Loop through the $positions array and concatenate the content.
-		foreach ($positions as $key => $position) {
-			$content .= $position.PHP_EOL;
-		}
-		// Prepare a directory to store the data.
-		if (!is_dir('loops')) {
-			mkdir('loops');
-		}
-
-		// Save the data on the hard drive,
-		file_put_contents("loops/starting_number_".$starting_number.".txt", $content);
-		// And exit the function.
-		return;
+		// Save the results to the hard drive
+		file_put_contents("pi_loops/starting_number_".$positions[0].".txt", $content);
+		return $rejects;
 	}
+
 }
+//--------------------------------------------------------------------------------------------
 
-// Load the digits of pi into memory (enter the correct filepath here)
-$pi = file_get_contents('pi_one_billion.txt');
 
-// Define boundaries within which to search
-$lower_boundary = 6650;
-$upper_boundary = 6670;
 
-// Start a stopwatch
+// Load $pi into memory
+$pi = file_get_contents('pi_one_and_a_half_billion.txt');
+// change the 3 in an arbitrary non-numeric character, we don't want it included in the search
+$pi[0] = ".";
+
+// Define boundaries to search in
+$lower_boundary = 1;
+$upper_boundary = 100;
+
+// start with an empty rejects array
+$rejects = [];
+
+// Or load the rejects from a previous search
+// $rejects = file_get_contents('pi_loops/rejects/rejects.txt');
+// $rejects = explode(PHP_EOL, $rejects);
+
+// start a stopwatch
 $start = hrtime();
 
-// Start the search 
-for ($i = $lower_boundary; $i < $upper_boundary; $i++) { 
-	// Lift off!
-	findLoop($pi, $i, $i);
+// prepare a directory to store the data
+if (!is_dir('pi_loops')) {
+	mkdir('pi_loops');
+
 }
 
-// Stop the stopwatch	
+// Start the program
+for ($i = $lower_boundary; $i <= $upper_boundary; $i++) { 
+	$positions = [$i];
+	$rejects = findLoop($pi, $i, $positions, $rejects);
+}
+
+
+// Stop the stopwatch
 $finish = hrtime();
-// Calculate the difference
-$time = ($finish[0] + ($finish[1] / 1000000000)) - ($start[0] + ($start[1] / 1000000000));
-// Present the answer
-echo "<p>Completed the search in: $time sec. Go ahead and look in the loops/ directory</p>";
+$time = ($finish[0] + ($finish[1] / 10**9)) - ($start[0] + ($start[1] / 10**9));
+
+// Save the rejects in a file
+$rejects = implode(PHP_EOL, $rejects);
+if (!is_dir('pi_loops/rejects')) {
+	mkdir('pi_loops/rejects');
+}
+file_put_contents('pi_loops/rejects/rejects.txt', $rejects);
+
+
+// Finishing it off 
+echo "<p>Completed the search in: $time sec.</p>";
 
 ?>
