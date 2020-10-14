@@ -51,7 +51,7 @@ function findLoop($pi,  $string,  $positions = [], $rejects = [], $counter = 0){
 
 	// select the offset as new string
 	$position = (string) ($matches[0][1] - 1);
-	$position = (string) ($matches[0][1] - 1);
+
 
 	// Determine whether the found position is novel
 	if (!in_array($position, $positions)) {
