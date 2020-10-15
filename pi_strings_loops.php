@@ -102,14 +102,13 @@ $rejects = [];
 // $rejects = file_get_contents('pi_loops/rejects/rejects.txt');
 // $rejects = explode(PHP_EOL, $rejects);
 
-// start a stopwatch
-$start = hrtime();
-
 // prepare a directory to store the data
 if (!is_dir('pi_loops')) {
 	mkdir('pi_loops');
 
 }
+// start a stopwatch
+$start = hrtime();
 
 // Start the program
 for ($i = $lower_boundary; $i <= $upper_boundary; $i++) { 
