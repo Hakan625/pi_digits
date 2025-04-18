@@ -9,8 +9,8 @@
 * If we look up "1" within the expansion of pi, we find that it's located at position 1: 
 * We say that "1" is a self-locating string.
 *
-* When we look up the string "11", we find that its first occurrence is located at position 94, rather than 11.
-* 11 is therefore not a self locating string.
+* When we look up the string "2", we find that its first occurrence is located at position 6, rather than 2.
+* "2" is therefore not a self locating string.
 *
 * For a detailed explanation check out this youtube video:
 * https://www.youtube.com/watch?v=W20aT14t8Pw
@@ -52,7 +52,6 @@ $counter = 0;
 // Start a stopwatch 
 $start = hrtime();
 
-
 // Loop through all integers between 1 and $pi_length
 for ($i = 1; $i < $pi_length; $i++) { 
 	// Verify for each integer whether it is a self-locating string
@@ -69,6 +68,5 @@ for ($i = 1; $i < $pi_length; $i++) {
 $finish = hrtime();
 // calculate the time differece
 $time = ($finish[0] + ($finish[1] / 10**9)) - ($start[0] + ($start[1] / 10**9));
-
-// Present the answer
+// Present the answer on the page
 echo "<p>$counter self-locating strings found between 1 and $pi_length. Computed in: $time sec</p>";
