@@ -11,10 +11,10 @@
 * Keep repeating this until you find that it returns to one of the previous offsets, effectively creating a loop.
 *
 *
-* This script goes through all integers within a self defined range (lines 95 and 96) and collects
+* This script goes through all integers within a self defined range (lines 96 and 97) and collects
 * the data on loops that were found, along with a seperate file containing positions that were not found.
 * If you decide to start another search and you want to load those rejects back into memory,
-* uncomment lines 102 and 103 by removing the two forward slashes at the start of the lines
+* uncomment lines 103 and 104 by removing the two forward slashes at the start of the lines
 *
 * Preparation:
 * Download a txt file with a number of pi digits (I downloaded 1.5 billion digits).
@@ -57,14 +57,14 @@ function findLoop($pi,  $string,  $positions = [], $rejects = [], $counter = 0){
 	if (!in_array($position, $positions)) {
 		// Add the position to the positions array
 		$positions[] = $position;
-		// increment the interation counter
+		// increment the iteration counter
 		$counter++;
-		// Re-enter the new position as the next string to search for (recursion) and return the rejects array that results from it
+		// Re-enter the new position as the next string to recursively search for and return the rejects array that results from it
 		return findLoop($pi, $position, $positions, $rejects, $counter);
 		
 	// If it is already present in the positions array, it means a loop has occurred!
 	} else {
-		// Collect some information
+		// Collect the information
 		$content = "After $counter iterations, the number $positions[0] loops back to a previous position.";
 		// Display it in the browser
 		echo "<p>".$content."</p>";
@@ -85,15 +85,16 @@ function findLoop($pi,  $string,  $positions = [], $rejects = [], $counter = 0){
 //--------------------------------------------------------------------------------------------
 
 
+// START HERE
 
 // Load $pi into memory
 $pi = file_get_contents('pi_one_and_a_half_billion.txt');
 // change the 3 in an arbitrary non-numeric character, we don't want it included in the search
 $pi[0] = ".";
 
-// Define boundaries to search in
+// Define boundaries to search within
 $lower_boundary = 1;
-$upper_boundary = 100;
+$upper_boundary = 100; // adjust this number to however deep you'd like your search to be
 
 // start with an empty rejects array
 $rejects = [];
@@ -116,18 +117,16 @@ for ($i = $lower_boundary; $i <= $upper_boundary; $i++) {
 	$rejects = findLoop($pi, $i, $positions, $rejects);
 }
 
-
 // Stop the stopwatch
 $finish = hrtime();
 $time = ($finish[0] + ($finish[1] / 10**9)) - ($start[0] + ($start[1] / 10**9));
 
-// Save the rejects in a file
+// Save the rejects in a text file
 $rejects = implode(PHP_EOL, $rejects);
 if (!is_dir('pi_loops/rejects')) {
 	mkdir('pi_loops/rejects');
 }
 file_put_contents('pi_loops/rejects/rejects.txt', $rejects);
-
 
 // Finishing it off 
 echo "<p>Completed the search in: $time sec.</p>";
